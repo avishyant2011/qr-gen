@@ -92,15 +92,13 @@
     </div>
 
     <div class="footer">
-      Auto-fixes URL • Fast • Free
+      Simple • Fast • Free
     </div>
   </div>
 
 <script>
   function normalizeURL(url) {
     url = url.trim();
-
-    // auto add https if missing
     if (!url.startsWith("http://") && !url.startsWith("https://")) {
       url = "https://" + url;
     }
