@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>QR Code Generator</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: linear-gradient(135deg, #d4fc79, #96e6a1);
+      padding: 40px;
+      margin: 0;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      max-width: 420px;
+      margin: auto;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      color: #2e7d32;
+      margin-bottom: 10px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: #4caf50;
+      box-shadow: 0 0 5px rgba(76,175,80,0.5);
+    }
+
+    button {
+      padding: 10px 18px;
+      margin: 8px 5px;
+      font-size: 15px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #4caf50;
+      color: white;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #388e3c;
+    }
+
+    canvas {
+      margin-top: 20px;
+    }
+
+    .actions {
+      margin-top: 15px;
+    }
+
+    .footer {
+      margin-top: 15px;
+      font-size: 12px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>QR Code Generator</h1>
+
+    <input type="text" id="url" placeholder="Enter URL (https://...)" />
+
+    <br>
+    <button onclick="generateQR()">Generate QR</button>
+
+    <div>
+      <canvas id="qrcode"></canvas>
+    </div>
+
+    <div class="actions">
+      <button onclick="downloadQR()">Download</button>
+      <button onclick="copyQR()">Copy</button>
+    </div>
+
+    <div class="footer">
+      Simple • Fast • Free
+    </div>
+  </div>
+
+  <script>
+    function isValidURL(string) {
+      try {
+        new URL(string);
+        return true;
+      } catch (_) {
+        return false;
+      }
+    }
+
+    function generateQR() {
+      const url = document.getElementById('url').value.trim();
+      const canvas = document.getElementById('qrcode');
+
+      if (!url) {
+        alert("Please enter a URL");
+        return;
+      }
+
+      if (!isValidURL(url)) {
+        alert("Enter a valid URL (include https://)");
+        return;
+      }
+
+      QRCode.toCanvas(canvas, url, { width: 250 }, function (error) {
+        if (error) {
+          console.error(error);
+          alert("Error generating QR");
+        }
+      });
+    }
+
+    function downloadQR() {
+      const canvas = document.getElementById('qrcode');
+
+      const link = document.createElement('a');
+      link.download = 'qr-code.png';
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    }
+
+    async function copyQR() {
+      const canvas = document.getElementById('qrcode');
+
+      canvas.toBlob(async function(blob) {
+        try {
+          await navigator.clipboard.write([
+            new ClipboardItem({ "image/png": blob })
+          ]);
+          alert("Copied to clipboard!");
+        } catch (err) {
+          alert("Copy not supported on this browser");
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>
